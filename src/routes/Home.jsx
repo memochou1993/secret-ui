@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './Home.css';
 import { grey } from '@mui/material/colors';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -8,7 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MainTable from '../components/MainTable';
 
-function App() {
+function Home() {
   return (
     <>
       <AppBar
@@ -51,4 +51,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;
