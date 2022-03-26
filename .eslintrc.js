@@ -5,5 +5,6 @@ module.exports = {
   ],
   rules: {
     'no-undef': 'off',
+    'react/jsx-props-no-spreading': 'off',
   },
 };

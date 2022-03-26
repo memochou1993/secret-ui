@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import MainTable from './MainTable';
+import MainTable from '../components/MainTable';
 
 function App() {
   return (
