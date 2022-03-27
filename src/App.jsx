@@ -4,6 +4,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 import Home from './routes/Home';
 import Login from './routes/Login';
+import RequireAuth from './components/RequireAuth';
+import { AuthProvider } from './hooks/useAuth';
 
 const theme = createTheme({
   palette: {
@@ -19,10 +21,22 @@ export default function App() {
       theme={theme}
     >
       <BrowserRouter>
-        <Routes>
-          <Route index element={<Home />} />
-          <Route path="login" element={<Login />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route
+              index
+              element={(
+                <RequireAuth>
+                  <Home />
+                </RequireAuth>
+              )}
+            />
+            <Route
+              path="login"
+              element={<Login />}
+            />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
   );

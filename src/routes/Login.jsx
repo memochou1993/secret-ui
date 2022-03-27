@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -7,6 +8,7 @@ import Link from '@mui/material/Link';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import useAuth from '../hooks/useAuth';
 
 function Copyright(props) {
   return (
@@ -30,10 +32,21 @@ function Copyright(props) {
 }
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const { state } = useLocation();
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log(data);
+    try {
+      await login({
+        email: data.get('email'),
+        password: data.get('password'),
+      });
+      navigate(state?.path || '/');
+    } catch (e) {
+      // TODO
+    }
   };
   return (
     <Container
