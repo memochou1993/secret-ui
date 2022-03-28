@@ -32,7 +32,7 @@ function Copyright(props) {
   );
 }
 
-export default function SignIn() {
+export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { state } = useLocation();

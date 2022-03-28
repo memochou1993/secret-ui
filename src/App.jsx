@@ -5,6 +5,7 @@ import { grey } from '@mui/material/colors';
 import Home from './routes/Home';
 import Login from './routes/Login';
 import RequireAuth from './components/RequireAuth';
+import RequireGuest from './components/RequireGuest';
 import { AuthProvider } from './hooks/useAuth';
 
 const theme = createTheme({
@@ -33,7 +34,11 @@ export default function App() {
             />
             <Route
               path="login"
-              element={<Login />}
+              element={(
+                <RequireGuest>
+                  <Login />
+                </RequireGuest>
+              )}
             />
           </Routes>
         </AuthProvider>
