@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -35,6 +36,7 @@ export default function SignIn() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { state } = useLocation();
+  const [error, setError] = useState('');
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -45,7 +47,7 @@ export default function SignIn() {
       });
       navigate(state?.path || '/');
     } catch (e) {
-      // TODO
+      setError(e.message);
     }
   };
   return (
@@ -58,7 +60,7 @@ export default function SignIn() {
           alignItems: 'center',
           display: 'flex',
           flexDirection: 'column',
-          marginTop: 16,
+          mt: 16,
         }}
       >
         <Avatar
@@ -73,14 +75,13 @@ export default function SignIn() {
           component="h1"
           variant="h5"
         >
-          Login
+          Secret
         </Typography>
         <Box
           component="form"
-          noValidate
           onSubmit={handleSubmit}
           sx={{
-            mt: 1,
+            mt: 2,
           }}
         >
           <TextField
@@ -105,7 +106,10 @@ export default function SignIn() {
           />
           <Button
             fullWidth
-            sx={{ mt: 3, mb: 2 }}
+            sx={{
+              mb: 2,
+              mt: 2,
+            }}
             type="submit"
             variant="contained"
           >
@@ -113,6 +117,13 @@ export default function SignIn() {
           </Button>
         </Box>
       </Box>
+      { error && (
+        <Alert
+          severity="error"
+        >
+          Incorrect username or password.
+        </Alert>
+      )}
       <Copyright
         sx={{
           mb: 4,
