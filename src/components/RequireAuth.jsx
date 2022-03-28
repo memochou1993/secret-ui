@@ -6,9 +6,12 @@ import {
 import useAuth from '../hooks/useAuth';
 
 function RequireAuth({ children }) {
-  const auth = useAuth();
+  const { token, finished } = useAuth();
   const location = useLocation();
-  if (!auth.token) {
+  if (!finished) {
+    return null;
+  }
+  if (!token) {
     return (
       <Navigate
         replace

@@ -15,9 +15,10 @@ export default function useAuth() {
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState('');
+  const [finished, setFinished] = useState(false);
   useEffect(() => {
-    // FIXME
     setToken(Cookie.get('token') || '');
+    setFinished(true);
   }, []);
   const login = ({ email, password }) => new Promise((res, rej) => {
     fetchToken({ email, password })
@@ -30,6 +31,7 @@ export function AuthProvider({ children }) {
   });
   const value = {
     token,
+    finished,
     login,
   };
   return (
