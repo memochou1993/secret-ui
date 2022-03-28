@@ -15,10 +15,10 @@ export default function useAuth() {
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState('');
-  const [finished, setFinished] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     setToken(Cookie.get('token') || '');
-    setFinished(true);
+    setLoading(false);
   }, []);
   const login = ({ email, password }) => new Promise((res, rej) => {
     fetchToken({ email, password })
@@ -29,10 +29,16 @@ export function AuthProvider({ children }) {
       })
       .catch((e) => rej(e));
   });
+  const logout = () => new Promise((res) => {
+    setToken('');
+    Cookie.remove('token');
+    res();
+  });
   const value = {
     token,
-    finished,
+    loading,
     login,
+    logout,
   };
   return (
     <AuthContext.Provider

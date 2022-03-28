@@ -6,9 +6,9 @@ import {
 import useAuth from '../hooks/useAuth';
 
 function RequireGuest({ children }) {
-  const { token, finished } = useAuth();
+  const { token, loading } = useAuth();
   const location = useLocation();
-  if (!finished) {
+  if (loading) {
     return null;
   }
   if (token) {

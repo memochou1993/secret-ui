@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 import Home from './routes/Home';
 import Login from './routes/Login';
+import Logout from './routes/Logout';
 import RequireAuth from './components/RequireAuth';
 import RequireGuest from './components/RequireGuest';
 import { AuthProvider } from './hooks/useAuth';
@@ -29,6 +30,14 @@ export default function App() {
               element={(
                 <RequireAuth>
                   <Home />
+                </RequireAuth>
+              )}
+            />
+            <Route
+              path="logout"
+              element={(
+                <RequireAuth>
+                  <Logout />
                 </RequireAuth>
               )}
             />
