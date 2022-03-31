@@ -9,6 +9,8 @@ module.exports = {
   rules: {
     'no-undef': 'off',
     'no-shadow': 'off',
+    'arrow-body-style': 'off',
+    'no-param-reassign': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-no-constructed-context-values': 'off',
     'react/prop-types': 'off',
