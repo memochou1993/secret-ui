@@ -29,6 +29,4 @@ export const fetchSecrets = () => {
   });
 };
 
-export default {
-  fetchToken,
-};
+export default null;

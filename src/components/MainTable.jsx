@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
+import Skeleton from '@mui/material/Skeleton';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,6 +13,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { fetchSecrets } from '../actions';
 import { setInterceptors } from '../plugins/axios';
 import useAuth from '../hooks/useAuth';
+import { delay } from '../helpers';
 
 export default function MainTable() {
   const auth = useAuth();
@@ -20,6 +22,7 @@ export default function MainTable() {
   setInterceptors(auth);
   useEffect(async () => {
     const { data } = await fetchSecrets();
+    await delay(250);
     setSecrets(data);
   }, []);
   const toggleVisibility = (id) => {
@@ -29,63 +32,85 @@ export default function MainTable() {
     }
     setVisibleSecrets([...visibleSecrets, id]);
   };
-  return (
-    <TableContainer
-      component={Paper}
-    >
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>
-              Name
-            </TableCell>
-            <TableCell>
-              Password
-            </TableCell>
-            <TableCell
-              align="center"
-            >
-              &nbsp;
-            </TableCell>
-            <TableCell
-              align="center"
-            >
-              &nbsp;
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {secrets.map((secret) => (
-            <TableRow
-              key={secret.name}
-            >
-              <TableCell
-                component="th"
-                scope="row"
-              >
-                {secret.name}
+  if (secrets.length > 0) {
+    return (
+      <TableContainer
+        component={Paper}
+      >
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                Username
               </TableCell>
               <TableCell>
-                {visibleSecrets.some((v) => v === secret.id) ? secret.value : '••••••••••••'}
+                Password
               </TableCell>
               <TableCell>
-                <IconButton
-                  color="primary"
-                  component="span"
-                  onClick={() => toggleVisibility(secret.id)}
-                >
-                  {visibleSecrets.some((v) => v === secret.id) ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
+                Tags
               </TableCell>
-              <TableCell
-                align="center"
-              >
+              <TableCell>
+                &nbsp;
+              </TableCell>
+              <TableCell>
                 &nbsp;
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {secrets.map((secret) => (
+              <TableRow
+                key={secret.id}
+              >
+                <TableCell
+                  component="th"
+                  scope="row"
+                  size="small"
+                >
+                  {secret.username}
+                </TableCell>
+                <TableCell
+                  size="small"
+                >
+                  {visibleSecrets.some((v) => v === secret.id) ? secret.password : '••••••••••••'}
+                </TableCell>
+                <TableCell
+                  component="th"
+                  scope="row"
+                  size="small"
+                >
+                  {secret.tags}
+                </TableCell>
+                <TableCell
+                  size="small"
+                >
+                  <IconButton
+                    color="primary"
+                    component="span"
+                    onClick={() => toggleVisibility(secret.id)}
+                  >
+                    {visibleSecrets.some((v) => v === secret.id) ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </TableCell>
+                <TableCell
+                  align="center"
+                  size="small"
+                >
+                  &nbsp;
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
+  return (
+    <Skeleton
+      animation="wave"
+      variant="rectangular"
+      height={400}
+      sx={{ borderRadius: '4px' }}
+    />
   );
 }
