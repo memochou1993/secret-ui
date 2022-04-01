@@ -39,11 +39,11 @@ export default function Login() {
   const [error, setError] = useState('');
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    const formData = new FormData(event.currentTarget);
     try {
       await login({
-        email: data.get('email'),
-        password: data.get('password'),
+        email: formData.get('email'),
+        password: formData.get('password'),
       });
       navigate(state?.path || '/');
     } catch (e) {

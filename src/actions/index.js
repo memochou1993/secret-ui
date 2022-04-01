@@ -29,4 +29,24 @@ export const fetchSecrets = () => {
   });
 };
 
+export const storeSecrets = ({
+  username,
+  password,
+  tags,
+}) => {
+  return new Promise((res, rej) => {
+    axios({
+      url: '/api/secrets',
+      method: 'POST',
+      data: {
+        username,
+        password,
+        tags,
+      },
+    })
+      .then(({ data }) => res(data))
+      .catch((e) => rej(e));
+  });
+};
+
 export default null;

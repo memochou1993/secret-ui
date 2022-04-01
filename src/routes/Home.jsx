@@ -82,7 +82,6 @@ function Home() {
         component="main"
         sx={{
           backgroundColor: grey[100],
-          height: '100vh',
         }}
       >
         <Container
@@ -91,6 +90,7 @@ function Home() {
           <Box
             sx={{
               pt: 15,
+              pb: 15,
             }}
           >
             <MainTable />
