@@ -18,12 +18,6 @@ function Home() {
   const navigate = useNavigate();
   const { token } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   const handleLogout = () => {
     navigate('/logout');
   };
@@ -48,7 +42,7 @@ function Home() {
             <div>
               <IconButton
                 color="inherit"
-                onClick={handleMenu}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
                 size="large"
               >
                 <AccountCircle />
@@ -61,7 +55,7 @@ function Home() {
                 }}
                 id="menu-appbar"
                 keepMounted
-                onClose={handleClose}
+                onClose={() => setAnchorEl(null)}
                 open={Boolean(anchorEl)}
                 transformOrigin={{
                   horizontal: 'right',

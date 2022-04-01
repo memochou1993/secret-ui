@@ -37,9 +37,9 @@ export default function Login() {
   const { login } = useAuth();
   const { state } = useLocation();
   const [error, setError] = useState('');
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     try {
       await login({
         email: formData.get('email'),
@@ -79,7 +79,7 @@ export default function Login() {
         </Typography>
         <Box
           component="form"
-          onSubmit={handleSubmit}
+          onSubmit={handleLogin}
           sx={{
             mt: 2,
           }}

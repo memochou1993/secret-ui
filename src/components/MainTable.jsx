@@ -56,9 +56,9 @@ export default function MainTable() {
     }
     setVisibleSecrets([...visibleSecrets, id]);
   };
-  const createSecret = async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  const createSecret = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     const { data } = await storeSecrets({
       username: formData.get('username'),
       password: formData.get('password'),
