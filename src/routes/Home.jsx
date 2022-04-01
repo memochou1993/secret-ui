@@ -90,7 +90,7 @@ function Home() {
         >
           <Box
             sx={{
-              paddingTop: '120px',
+              pt: 15,
             }}
           >
             <MainTable />
