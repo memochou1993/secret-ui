@@ -29,11 +29,10 @@ export function AuthProvider({ children }) {
       })
       .catch((e) => rej(e));
   });
-  const logout = () => new Promise((res) => {
+  const logout = () => {
     setToken('');
     Cookie.remove('token');
-    res();
-  });
+  };
   const value = {
     token,
     loading,

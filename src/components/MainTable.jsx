@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
@@ -24,24 +25,27 @@ import {
   storeSecret,
   destroySecret,
 } from '../actions';
-import { setInterceptors } from '../plugins/axios';
 import useAuth from '../hooks/useAuth';
 import { delay } from '../helpers';
 
 export default function MainTable() {
-  const auth = useAuth();
+  const { token } = useAuth();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [secrets, setSecrets] = useState([]);
   const [keyword, setKeyword] = useState('');
   const [visibleSecrets, setVisibleSecrets] = useState([]);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
-  setInterceptors(auth);
   useEffect(async () => {
-    const { data } = await fetchSecrets();
-    await delay(250);
-    setSecrets(data);
-    setIsLoading(false);
-  }, [keyword]);
+    try {
+      const { data } = await fetchSecrets({ token });
+      await delay(250);
+      setSecrets(data);
+      setIsLoading(false);
+    } catch {
+      navigate('/logout');
+    }
+  }, []);
   const filter = useMemo(() => (secret) => {
     if (!keyword) {
       return true;
@@ -60,18 +64,27 @@ export default function MainTable() {
   };
   const createSecret = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const { data } = await storeSecret({
-      username: formData.get('username'),
-      password: formData.get('password'),
-      tags: formData.get('tags'),
-    });
-    setSecrets([data, ...secrets]);
-    setIsCreateFormOpen(false);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const { data } = await storeSecret({
+        token,
+        username: formData.get('username'),
+        password: formData.get('password'),
+        tags: formData.get('tags'),
+      });
+      setSecrets([data, ...secrets]);
+      setIsCreateFormOpen(false);
+    } catch {
+      navigate('/logout');
+    }
   };
   const deleteSecret = async (id) => {
-    await destroySecret(id);
-    setSecrets(secrets.filter((secret) => secret.id !== id));
+    try {
+      await destroySecret({ token, id });
+      setSecrets(secrets.filter((secret) => secret.id !== id));
+    } catch {
+      navigate('/logout');
+    }
   };
   if (!isLoading) {
     return (
