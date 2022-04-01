@@ -9,7 +9,7 @@ import Link from '@mui/material/Link';
 import LockOutlined from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 
 function Copyright(props) {
   return (

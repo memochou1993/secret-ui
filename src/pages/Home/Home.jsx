@@ -11,8 +11,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MainTable from '../components/MainTable';
-import useAuth from '../hooks/useAuth';
+import MainTable from '../../components/MainTable';
+import useAuth from '../../hooks/useAuth';
 
 function Home() {
   const navigate = useNavigate();

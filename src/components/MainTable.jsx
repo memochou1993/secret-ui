@@ -181,6 +181,7 @@ export default function MainTable() {
             xs={4}
           >
             <TextField
+              autoComplete="off"
               autoFocus
               fullWidth
               placeholder="Search"
