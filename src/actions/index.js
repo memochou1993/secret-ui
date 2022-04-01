@@ -29,7 +29,7 @@ export const fetchSecrets = () => {
   });
 };
 
-export const storeSecrets = ({
+export const storeSecret = ({
   username,
   password,
   tags,
@@ -43,6 +43,17 @@ export const storeSecrets = ({
         password,
         tags,
       },
+    })
+      .then(({ data }) => res(data))
+      .catch((e) => rej(e));
+  });
+};
+
+export const destroySecret = (id) => {
+  return new Promise((res, rej) => {
+    axios({
+      url: `/api/secrets/${id}`,
+      method: 'DELETE',
     })
       .then(({ data }) => res(data))
       .catch((e) => rej(e));

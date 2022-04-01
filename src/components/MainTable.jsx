@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -20,7 +21,8 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {
   fetchSecrets,
-  storeSecrets,
+  storeSecret,
+  destroySecret,
 } from '../actions';
 import { setInterceptors } from '../plugins/axios';
 import useAuth from '../hooks/useAuth';
@@ -50,8 +52,8 @@ export default function MainTable() {
     setKeyword(e.currentTarget.value);
   };
   const toggleVisibility = (id) => {
-    if (visibleSecrets.some((v) => v === id)) {
-      setVisibleSecrets(visibleSecrets.filter((v) => v !== id));
+    if (visibleSecrets.some((i) => i === id)) {
+      setVisibleSecrets(visibleSecrets.filter((i) => i !== id));
       return;
     }
     setVisibleSecrets([...visibleSecrets, id]);
@@ -59,13 +61,17 @@ export default function MainTable() {
   const createSecret = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const { data } = await storeSecrets({
+    const { data } = await storeSecret({
       username: formData.get('username'),
       password: formData.get('password'),
       tags: formData.get('tags'),
     });
     setSecrets([data, ...secrets]);
     setIsCreateFormOpen(false);
+  };
+  const deleteSecret = async (id) => {
+    await destroySecret(id);
+    setSecrets(secrets.filter((secret) => secret.id !== id));
   };
   if (!isLoading) {
     return (
@@ -188,9 +194,6 @@ export default function MainTable() {
                 <TableCell>
                   &nbsp;
                 </TableCell>
-                <TableCell>
-                  &nbsp;
-                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -224,15 +227,22 @@ export default function MainTable() {
                       color="primary"
                       component="span"
                       onClick={() => toggleVisibility(secret.id)}
+                      sx={{
+                        mx: 1,
+                      }}
                     >
                       {visibleSecrets.some((v) => v === secret.id) ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    size="small"
-                  >
-                    &nbsp;
+                    <IconButton
+                      color="primary"
+                      component="span"
+                      onClick={() => deleteSecret(secret.id)}
+                      sx={{
+                        mx: 1,
+                      }}
+                    >
+                      <DeleteOutline />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
