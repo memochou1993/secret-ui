@@ -7,13 +7,13 @@ module.exports = {
     ecmaVersion: '2020',
   },
   rules: {
-    'no-undef': 'off',
-    'no-shadow': 'off',
-    'max-len': 'off',
     'arrow-body-style': 'off',
+    'max-len': 'off',
     'no-param-reassign': 'off',
-    'react/jsx-props-no-spreading': 'off',
+    'no-shadow': 'off',
+    'no-undef': 'off',
     'react/jsx-no-constructed-context-values': 'off',
+    'react/jsx-props-no-spreading': 'off',
     'react/prop-types': 'off',
   },
 };
