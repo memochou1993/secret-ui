@@ -28,6 +28,7 @@ import { delay } from '../helpers';
 
 export default function MainTable() {
   const auth = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
   const [secrets, setSecrets] = useState([]);
   const [keyword, setKeyword] = useState('');
   const [visibleSecrets, setVisibleSecrets] = useState([]);
@@ -37,6 +38,7 @@ export default function MainTable() {
     const { data } = await fetchSecrets();
     await delay(250);
     setSecrets(data);
+    setIsLoading(false);
   }, [keyword]);
   const filter = useMemo(() => (secret) => {
     if (!keyword) {
@@ -65,7 +67,7 @@ export default function MainTable() {
     setSecrets([data, ...secrets]);
     setIsCreateFormOpen(false);
   };
-  if (secrets.length > 0) {
+  if (!isLoading) {
     return (
       <>
         <Grid

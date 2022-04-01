@@ -82,15 +82,16 @@ function Home() {
         component="main"
         sx={{
           backgroundColor: grey[100],
+          minHeight: '100vh',
         }}
       >
         <Container
-          maxWidth="sm"
+          maxWidth="md"
         >
           <Box
             sx={{
               pt: 15,
-              pb: 15,
+              pb: 10,
             }}
           >
             <MainTable />
