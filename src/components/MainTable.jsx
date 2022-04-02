@@ -10,6 +10,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
+import CopyButton from './CopyButton';
 import CreateButton from './CreateButton';
 import DeleteButton from './DeleteButton';
 import ViewButton from './ViewButton';
@@ -176,6 +177,9 @@ export default function MainTable() {
                       isVisible={isVisible(secret.id)}
                       onToggleVisibility={toggleVisibility}
                       secretId={secret.id}
+                    />
+                    <CopyButton
+                      text={secret.password}
                     />
                     <DeleteButton
                       onDelete={deleteSecret}
