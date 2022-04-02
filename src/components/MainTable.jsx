@@ -39,10 +39,11 @@ export default function MainTable() {
     }
   }, []);
   const filter = useMemo(() => (secret) => {
-    if (!keyword) {
-      return true;
-    }
-    return secret.username.includes(keyword) || secret.tags.includes(keyword);
+    const k = keyword.trim().toUpperCase();
+    if (!k) return true;
+    if (secret.username.toUpperCase().includes(k)) return true;
+    if (secret.tags.toUpperCase().includes(k)) return true;
+    return false;
   }, [keyword]);
   const isVisible = (id) => visibleSecrets.some((v) => v === id);
   const toggleVisibility = (id) => {
