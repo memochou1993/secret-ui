@@ -1,12 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
@@ -20,6 +14,7 @@ import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import CreateButton from './CreateButton';
 import {
   fetchSecrets,
   storeSecret,
@@ -35,7 +30,6 @@ export default function MainTable() {
   const [secrets, setSecrets] = useState([]);
   const [keyword, setKeyword] = useState('');
   const [visibleSecrets, setVisibleSecrets] = useState([]);
-  const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
   useEffect(async () => {
     try {
       const { data } = await fetchSecrets({ token });
@@ -73,7 +67,6 @@ export default function MainTable() {
         tags: formData.get('tags'),
       });
       setSecrets([data, ...secrets]);
-      setIsCreateFormOpen(false);
     } catch {
       navigate('/logout');
     }
@@ -101,80 +94,9 @@ export default function MainTable() {
             item
             xs={8}
           >
-            <div>
-              <Button
-                color="primary"
-                disableRipple
-                variant="outlined"
-                onClick={() => setIsCreateFormOpen(true)}
-                sx={{
-                  height: '40px',
-                }}
-              >
-                Create
-              </Button>
-              <Dialog
-                open={isCreateFormOpen}
-                onClose={() => setIsCreateFormOpen(false)}
-              >
-                <Box
-                  component="form"
-                  onSubmit={createSecret}
-                >
-                  <DialogTitle>
-                    New Secret
-                  </DialogTitle>
-                  <DialogContent>
-                    <TextField
-                      autoComplete="off"
-                      autoFocus
-                      fullWidth
-                      id="username"
-                      label="Username"
-                      margin="dense"
-                      name="username"
-                      required
-                      type="text"
-                      variant="outlined"
-                    />
-                    <TextField
-                      autoComplete="off"
-                      fullWidth
-                      id="password"
-                      label="Password"
-                      margin="dense"
-                      name="password"
-                      required
-                      type="password"
-                      variant="outlined"
-                    />
-                    <TextField
-                      autoComplete="off"
-                      fullWidth
-                      id="tags"
-                      label="Tags"
-                      margin="dense"
-                      name="tags"
-                      required
-                      type="text"
-                      variant="outlined"
-                    />
-                  </DialogContent>
-                  <DialogActions>
-                    <Button
-                      onClick={() => setIsCreateFormOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                    >
-                      Save
-                    </Button>
-                  </DialogActions>
-                </Box>
-              </Dialog>
-            </div>
+            <CreateButton
+              onCreateSecret={createSecret}
+            />
           </Grid>
           <Grid
             item
