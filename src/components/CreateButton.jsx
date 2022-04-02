@@ -8,10 +8,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 
 export default function CreateButton(props) {
-  const { onCreateSecret } = props;
+  const { onCreate } = props;
   const [open, setOpen] = useState(false);
   const createSecret = (e) => {
-    onCreateSecret(e);
+    onCreate(e);
     setOpen(false);
   };
   return (

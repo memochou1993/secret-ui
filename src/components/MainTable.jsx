@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
@@ -15,6 +14,7 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CreateButton from './CreateButton';
+import DeleteButton from './DeleteButton';
 import {
   fetchSecrets,
   storeSecret,
@@ -95,7 +95,7 @@ export default function MainTable() {
             xs={8}
           >
             <CreateButton
-              onCreateSecret={createSecret}
+              onCreate={createSecret}
             />
           </Grid>
           <Grid
@@ -169,16 +169,9 @@ export default function MainTable() {
                     >
                       {visibleSecrets.some((v) => v === secret.id) ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
-                    <IconButton
-                      color="primary"
-                      component="span"
-                      onClick={() => deleteSecret(secret.id)}
-                      sx={{
-                        mx: 1,
-                      }}
-                    >
-                      <DeleteOutline />
-                    </IconButton>
+                    <DeleteButton
+                      onDelete={() => deleteSecret(secret.id)}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
