@@ -43,10 +43,21 @@ export default function CreateButton(props) {
               autoComplete="off"
               autoFocus
               fullWidth
-              id="username"
-              label="Username"
+              id="name"
+              label="Name"
               margin="dense"
-              name="username"
+              name="name"
+              required
+              type="text"
+              variant="outlined"
+            />
+            <TextField
+              autoComplete="off"
+              fullWidth
+              id="account"
+              label="Account"
+              margin="dense"
+              name="account"
               required
               type="text"
               variant="outlined"
@@ -60,17 +71,6 @@ export default function CreateButton(props) {
               name="password"
               required
               type="password"
-              variant="outlined"
-            />
-            <TextField
-              autoComplete="off"
-              fullWidth
-              id="tags"
-              label="Tags"
-              margin="dense"
-              name="tags"
-              required
-              type="text"
               variant="outlined"
             />
           </DialogContent>

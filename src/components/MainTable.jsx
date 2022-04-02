@@ -19,11 +19,15 @@ import {
   storeSecret,
   destroySecret,
 } from '../actions';
+import {
+  decrypt,
+  delay,
+  encrypt,
+} from '../helpers';
 import useAuth from '../hooks/useAuth';
-import { delay } from '../helpers';
 
 export default function MainTable() {
-  const { token } = useAuth();
+  const { key, token } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [secrets, setSecrets] = useState([]);
@@ -33,17 +37,26 @@ export default function MainTable() {
     try {
       const { data } = await fetchSecrets({ token });
       await delay(250);
-      setSecrets(data);
+      const secrets = data.map((secret) => {
+        const { ciphertext } = secret;
+        const { account, password } = JSON.parse(decrypt(ciphertext, key));
+        return {
+          ...secret,
+          account,
+          password,
+        };
+      });
+      setSecrets(secrets);
       setIsLoading(false);
     } catch {
       navigate('/logout');
     }
   }, []);
   const filter = useMemo(() => (secret) => {
-    const k = keyword.trim().toUpperCase();
-    if (!k) return true;
-    if (secret.username.toUpperCase().includes(k)) return true;
-    if (secret.tags.toUpperCase().includes(k)) return true;
+    const word = keyword.trim().toUpperCase();
+    if (!word) return true;
+    if (secret.name.toUpperCase().includes(word)) return true;
+    if (secret.account.toUpperCase().includes(word)) return true;
     return false;
   }, [keyword]);
   const isVisible = (id) => visibleSecrets.some((v) => v === id);
@@ -60,11 +73,19 @@ export default function MainTable() {
       const formData = new FormData(e.currentTarget);
       const { data } = await storeSecret({
         token,
-        username: formData.get('username'),
-        password: formData.get('password'),
-        tags: formData.get('tags'),
+        name: formData.get('name'),
+        ciphertext: encrypt(JSON.stringify({
+          account: formData.get('account'),
+          password: formData.get('password'),
+        }), key),
       });
-      setSecrets([data, ...secrets]);
+      const { id, name, ciphertext } = data;
+      const secret = {
+        id,
+        name,
+        ...JSON.parse(decrypt(ciphertext, key)),
+      };
+      setSecrets([secret, ...secrets]);
     } catch {
       navigate('/logout');
     }
@@ -121,7 +142,14 @@ export default function MainTable() {
                     minWidth: '100px',
                   }}
                 >
-                  Username
+                  Name
+                </TableCell>
+                <TableCell
+                  sx={{
+                    minWidth: '100px',
+                  }}
+                >
+                  Account
                 </TableCell>
                 <TableCell
                   sx={{
@@ -129,13 +157,6 @@ export default function MainTable() {
                   }}
                 >
                   Password
-                </TableCell>
-                <TableCell
-                  sx={{
-                    minWidth: '100px',
-                  }}
-                >
-                  Tags
                 </TableCell>
                 <TableCell
                   sx={{
@@ -156,19 +177,19 @@ export default function MainTable() {
                     scope="row"
                     size="small"
                   >
-                    {secret.username}
-                  </TableCell>
-                  <TableCell
-                    size="small"
-                  >
-                    {isVisible(secret.id) ? secret.password : '••••••••••••'}
+                    {secret.name}
                   </TableCell>
                   <TableCell
                     component="th"
                     scope="row"
                     size="small"
                   >
-                    {secret.tags}
+                    {secret.account}
+                  </TableCell>
+                  <TableCell
+                    size="small"
+                  >
+                    {isVisible(secret.id) ? secret.password : '••••••••••••'}
                   </TableCell>
                   <TableCell
                     size="small"

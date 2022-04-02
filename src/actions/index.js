@@ -36,18 +36,16 @@ export const fetchSecrets = ({
 
 export const storeSecret = ({
   token,
-  username,
-  password,
-  tags,
+  name,
+  ciphertext,
 }) => {
   return new Promise((res, rej) => {
     axios({
       url: '/api/secrets',
       method: 'POST',
       data: {
-        username,
-        password,
-        tags,
+        name,
+        ciphertext,
       },
       headers: {
         Authorization: `Bearer ${token}`,

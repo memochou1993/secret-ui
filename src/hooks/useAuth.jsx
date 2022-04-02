@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import { hash } from '../helpers';
 import { fetchToken } from '../actions';
 
 const AuthContext = createContext(null);
@@ -13,6 +14,7 @@ export default function useAuth() {
 }
 
 export function AuthProvider({ children }) {
+  const [key, setKey] = useState('');
   const [token, setToken] = useState('');
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -22,6 +24,7 @@ export function AuthProvider({ children }) {
     return new Promise((res, rej) => {
       fetchToken({ email, password })
         .then(({ token }) => {
+          setKey(hash(password));
           setToken(token);
           res();
         })
@@ -32,6 +35,7 @@ export function AuthProvider({ children }) {
     setToken('');
   };
   const value = {
+    key,
     token,
     loading,
     login,
