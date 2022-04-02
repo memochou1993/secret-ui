@@ -38,10 +38,11 @@ export default function MainTable() {
       const { data } = await fetchSecrets({ token });
       await delay(250);
       const secrets = data.map((secret) => {
-        const { ciphertext } = secret;
+        const { id, name, ciphertext } = secret;
         const { account, password } = JSON.parse(decrypt(ciphertext, key));
         return {
-          ...secret,
+          id,
+          name,
           account,
           password,
         };
