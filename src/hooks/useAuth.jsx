@@ -14,25 +14,32 @@ export default function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [key, setKey] = useState('');
-  const [token, setToken] = useState('');
+  const [key, setKey] = useState(null);
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setKey(sessionStorage.getItem('key'));
+    setToken(sessionStorage.getItem('token'));
     setLoading(false);
   }, []);
   const login = ({ email, password }) => {
     return new Promise((res, rej) => {
       fetchToken({ email, password })
         .then(({ token }) => {
-          setKey(hash(password));
+          const key = hash(password);
+          setKey(key);
           setToken(token);
+          sessionStorage.setItem('key', key);
+          sessionStorage.setItem('token', token);
           res();
         })
         .catch((e) => rej(e));
     });
   };
   const logout = () => {
-    setToken('');
+    setKey(null);
+    setToken(null);
+    sessionStorage.clear();
   };
   const value = {
     key,
