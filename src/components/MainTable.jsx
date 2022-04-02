@@ -115,16 +115,32 @@ export default function MainTable() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    minWidth: '100px',
+                  }}
+                >
                   Username
                 </TableCell>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    minWidth: '200px',
+                  }}
+                >
                   Password
                 </TableCell>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    minWidth: '100px',
+                  }}
+                >
                   Tags
                 </TableCell>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    minWidth: '100px',
+                  }}
+                >
                   &nbsp;
                 </TableCell>
               </TableRow>
