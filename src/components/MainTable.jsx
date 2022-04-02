@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Table from '@mui/material/Table';
@@ -11,10 +10,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CreateButton from './CreateButton';
 import DeleteButton from './DeleteButton';
+import UnlockButton from './UnlockButton';
 import {
   fetchSecrets,
   storeSecret,
@@ -46,11 +44,9 @@ export default function MainTable() {
     }
     return secret.username.includes(keyword) || secret.tags.includes(keyword);
   }, [keyword]);
-  const search = (e) => {
-    setKeyword(e.currentTarget.value);
-  };
+  const isVisible = (id) => visibleSecrets.some((v) => v === id);
   const toggleVisibility = (id) => {
-    if (visibleSecrets.some((i) => i === id)) {
+    if (isVisible(id)) {
       setVisibleSecrets(visibleSecrets.filter((i) => i !== id));
       return;
     }
@@ -108,7 +104,7 @@ export default function MainTable() {
               fullWidth
               placeholder="Search"
               size="small"
-              onChange={search}
+              onChange={(e) => setKeyword(e.currentTarget.value)}
             />
           </Grid>
         </Grid>
@@ -147,7 +143,7 @@ export default function MainTable() {
                   <TableCell
                     size="small"
                   >
-                    {visibleSecrets.some((v) => v === secret.id) ? secret.password : '••••••••••••'}
+                    {isVisible(secret.id) ? secret.password : '••••••••••••'}
                   </TableCell>
                   <TableCell
                     component="th"
@@ -159,16 +155,10 @@ export default function MainTable() {
                   <TableCell
                     size="small"
                   >
-                    <IconButton
-                      color="primary"
-                      component="span"
-                      onClick={() => toggleVisibility(secret.id)}
-                      sx={{
-                        mx: 1,
-                      }}
-                    >
-                      {visibleSecrets.some((v) => v === secret.id) ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
+                    <UnlockButton
+                      isVisible={isVisible(secret.id)}
+                      onToggleVisibility={() => toggleVisibility(secret.id)}
+                    />
                     <DeleteButton
                       onDelete={() => deleteSecret(secret.id)}
                     />
