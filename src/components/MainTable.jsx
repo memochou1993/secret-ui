@@ -12,7 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import CreateButton from './CreateButton';
 import DeleteButton from './DeleteButton';
-import UnlockButton from './UnlockButton';
+import ViewButton from './ViewButton';
 import {
   fetchSecrets,
   storeSecret,
@@ -156,12 +156,14 @@ export default function MainTable() {
                   <TableCell
                     size="small"
                   >
-                    <UnlockButton
+                    <ViewButton
                       isVisible={isVisible(secret.id)}
-                      onToggleVisibility={() => toggleVisibility(secret.id)}
+                      onToggleVisibility={toggleVisibility}
+                      secretId={secret.id}
                     />
                     <DeleteButton
-                      onDelete={() => deleteSecret(secret.id)}
+                      onDelete={deleteSecret}
+                      secretId={secret.id}
                     />
                   </TableCell>
                 </TableRow>

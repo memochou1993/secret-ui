@@ -83,7 +83,7 @@ export default function CreateButton(props) {
             <Button
               type="submit"
             >
-              Save
+              Create
             </Button>
           </DialogActions>
         </Box>

@@ -3,12 +3,15 @@ import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import IconButton from '@mui/material/IconButton';
 
 export default function DeleteButton(props) {
-  const { onDelete } = props;
+  const { onDelete, secretId } = props;
+  const deleteSecret = () => {
+    onDelete(secretId);
+  };
   return (
     <IconButton
       color="primary"
       component="span"
-      onClick={onDelete}
+      onClick={deleteSecret}
       sx={{
         mx: 1,
       }}
