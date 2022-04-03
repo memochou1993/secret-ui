@@ -125,7 +125,7 @@ export default function Login() {
             mt: 2,
           }}
         >
-          Incorrect username or password.
+          Incorrect email address or password.
         </Alert>
       )}
       <Copyright
