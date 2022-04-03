@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 import Home from './pages/Home';
@@ -22,7 +22,7 @@ export default function App() {
     <ThemeProvider
       theme={theme}
     >
-      <BrowserRouter>
+      <HashRouter>
         <AuthProvider>
           <Routes>
             <Route
@@ -51,7 +51,7 @@ export default function App() {
             />
           </Routes>
         </AuthProvider>
-      </BrowserRouter>
+      </HashRouter>
     </ThemeProvider>
   );
 }
