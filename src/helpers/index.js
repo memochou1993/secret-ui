@@ -6,16 +6,16 @@ export const delay = (delay) => {
   });
 };
 
-export const hash = (text) => {
-  return CryptoJS.SHA256(text).toString();
+export const decrypt = (text, key) => {
+  return CryptoJS.AES.decrypt(text, key).toString(CryptoJS.enc.Utf8);
 };
 
 export const encrypt = (text, key) => {
   return CryptoJS.AES.encrypt(text, key).toString();
 };
 
-export const decrypt = (text, key) => {
-  return CryptoJS.AES.decrypt(text, key).toString(CryptoJS.enc.Utf8);
+export const hash = (text) => {
+  return CryptoJS.SHA256(text).toString();
 };
 
 export default null;

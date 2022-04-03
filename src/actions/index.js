@@ -18,6 +18,28 @@ export const fetchToken = ({
   });
 };
 
+export const updateUser = ({
+  token,
+  email,
+  password,
+}) => {
+  return new Promise((res, rej) => {
+    axios({
+      url: '/api/user',
+      method: 'PATCH',
+      data: {
+        email,
+        password,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(({ data }) => res(data))
+      .catch((e) => rej(e));
+  });
+};
+
 export const fetchSecrets = ({
   token,
 }) => {
@@ -43,6 +65,29 @@ export const storeSecret = ({
     axios({
       url: '/api/secrets',
       method: 'POST',
+      data: {
+        name,
+        ciphertext,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(({ data }) => res(data))
+      .catch((e) => rej(e));
+  });
+};
+
+export const updateSecret = ({
+  token,
+  id,
+  name,
+  ciphertext,
+}) => {
+  return new Promise((res, rej) => {
+    axios({
+      url: `/api/secrets/${id}`,
+      method: 'PATCH',
       data: {
         name,
         ciphertext,

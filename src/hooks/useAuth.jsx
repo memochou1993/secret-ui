@@ -16,10 +16,12 @@ export default function useAuth() {
 export function AuthProvider({ children }) {
   const [key, setKey] = useState(null);
   const [token, setToken] = useState(null);
+  const [email, setEmail] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     setKey(sessionStorage.getItem('key'));
     setToken(sessionStorage.getItem('token'));
+    setEmail(sessionStorage.getItem('email'));
     setLoading(false);
   }, []);
   const login = ({ email, password }) => {
@@ -29,8 +31,10 @@ export function AuthProvider({ children }) {
           const key = hash(password);
           setKey(key);
           setToken(token);
+          setEmail(email);
           sessionStorage.setItem('key', key);
           sessionStorage.setItem('token', token);
+          sessionStorage.setItem('email', email);
           res();
         })
         .catch((e) => rej(e));
@@ -39,11 +43,13 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setKey(null);
     setToken(null);
+    setEmail(null);
     sessionStorage.clear();
   };
   const value = {
     key,
     token,
+    email,
     loading,
     login,
     logout,

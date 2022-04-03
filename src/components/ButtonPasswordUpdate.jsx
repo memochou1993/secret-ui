@@ -7,11 +7,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 
-export default function CreateButton(props) {
-  const { onCreate } = props;
+export default function ButtonPasswordUpdate(props) {
+  const { onUpdate } = props;
   const [open, setOpen] = useState(false);
-  const createSecret = (e) => {
-    onCreate(e);
+  const updatePassword = (e) => {
+    onUpdate(e);
     setOpen(false);
   };
   return (
@@ -23,9 +23,10 @@ export default function CreateButton(props) {
         onClick={() => setOpen(true)}
         sx={{
           height: '40px',
+          mr: '4px',
         }}
       >
-        Create
+        Update Password
       </Button>
       <Dialog
         open={open}
@@ -33,39 +34,20 @@ export default function CreateButton(props) {
       >
         <Box
           component="form"
-          onSubmit={createSecret}
+          onSubmit={updatePassword}
         >
           <DialogTitle>
-            New Secret
+            Update Password
           </DialogTitle>
           <DialogContent>
             <TextField
               autoComplete="off"
               autoFocus
               fullWidth
-              id="name"
-              label="Name"
-              margin="dense"
-              name="name"
-              required
-              type="text"
-              variant="outlined"
-            />
-            <TextField
-              autoComplete="off"
-              fullWidth
-              id="account"
-              label="Account"
-              margin="dense"
-              name="account"
-              required
-              type="text"
-              variant="outlined"
-            />
-            <TextField
-              autoComplete="off"
-              fullWidth
               id="password"
+              inputProps={{
+                minLength: 8,
+              }}
               label="Password"
               margin="dense"
               name="password"
@@ -83,7 +65,7 @@ export default function CreateButton(props) {
             <Button
               type="submit"
             >
-              Create
+              Update
             </Button>
           </DialogActions>
         </Box>

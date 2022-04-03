@@ -10,27 +10,32 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
-import CopyButton from './CopyButton';
-import CreateButton from './CreateButton';
-import DeleteButton from './DeleteButton';
-import ViewButton from './ViewButton';
+import ButtonPasswordUpdate from './ButtonPasswordUpdate';
+import ButtonSecretCreate from './ButtonSecretCreate';
+import ButtonSecretDelete from './ButtonSecretDelete';
+import ButtonSecretCopy from './ButtonSecretCopy';
+import ButtonSecretView from './ButtonSecretView';
 import {
+  updateUser,
   fetchSecrets,
   storeSecret,
+  updateSecret,
   destroySecret,
 } from '../actions';
 import {
   delay,
   encrypt,
+  hash,
 } from '../helpers';
 import useAuth from '../hooks/useAuth';
+import useSecrets from '../hooks/useSecrets';
 import Secret from '../models/Secret';
 
 export default function MainTable() {
-  const { key, token } = useAuth();
+  const { key, token, email } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [secrets, setSecrets] = useState([]);
+  const [secrets, setSecrets] = useSecrets([]);
   const [keyword, setKeyword] = useState('');
   const [visibleSecrets, setVisibleSecrets] = useState([]);
   useEffect(async () => {
@@ -60,14 +65,14 @@ export default function MainTable() {
   };
   const createSecret = async (e) => {
     e.preventDefault();
+    const { name, account, password } = Object.fromEntries(new FormData(e.currentTarget));
     try {
-      const formData = new FormData(e.currentTarget);
       const { data } = await storeSecret({
         token,
-        name: formData.get('name'),
+        name,
         ciphertext: encrypt(JSON.stringify({
-          account: formData.get('account'),
-          password: formData.get('password'),
+          account,
+          password,
         }), key),
       });
       setSecrets([new Secret(data, key), ...secrets]);
@@ -79,6 +84,31 @@ export default function MainTable() {
     try {
       await destroySecret({ token, id });
       setSecrets(secrets.filter((secret) => secret.id !== id));
+    } catch {
+      navigate('/logout');
+    }
+  };
+  const updatePassword = async (e) => {
+    e.preventDefault();
+    const { password } = Object.fromEntries(new FormData(e.currentTarget));
+    try {
+      await updateUser({
+        token,
+        email,
+        password,
+      });
+      secrets.forEach((secret) => {
+        updateSecret({
+          token,
+          id: secret.id,
+          name: secret.name,
+          ciphertext: encrypt(JSON.stringify({
+            account: secret.account,
+            password: secret.password,
+          }), hash(password)),
+        });
+      });
+      navigate('/logout');
     } catch {
       navigate('/logout');
     }
@@ -98,8 +128,11 @@ export default function MainTable() {
             item
             xs={8}
           >
-            <CreateButton
+            <ButtonSecretCreate
               onCreate={createSecret}
+            />
+            <ButtonPasswordUpdate
+              onUpdate={updatePassword}
             />
           </Grid>
           <Grid
@@ -179,15 +212,15 @@ export default function MainTable() {
                   <TableCell
                     size="small"
                   >
-                    <ViewButton
+                    <ButtonSecretView
                       isVisible={isVisible(secret.id)}
                       onToggleVisibility={toggleVisibility}
                       secretId={secret.id}
                     />
-                    <CopyButton
+                    <ButtonSecretCopy
                       text={secret.password}
                     />
-                    <DeleteButton
+                    <ButtonSecretDelete
                       onDelete={deleteSecret}
                       secretId={secret.id}
                     />

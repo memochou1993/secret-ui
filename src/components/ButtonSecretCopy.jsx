@@ -2,7 +2,7 @@ import React from 'react';
 import ContentCopy from '@mui/icons-material/ContentCopy';
 import IconButton from '@mui/material/IconButton';
 
-export default function CopyButton(props) {
+export default function ButtonSecretCopy(props) {
   const { text } = props;
   return (
     <IconButton
