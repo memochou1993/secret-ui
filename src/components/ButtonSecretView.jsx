@@ -19,6 +19,10 @@ export default function ButtonSecretView(props) {
       onClick={toggleVisibility}
       sx={{
         mr: 1,
+        display: {
+          xs: 'none',
+          sm: 'inline-flex',
+        },
       }}
     >
       {isVisible ? <Visibility /> : <VisibilityOff />}

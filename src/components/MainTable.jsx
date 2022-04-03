@@ -176,13 +176,20 @@ export default function MainTable() {
                 <TableCell
                   sx={{
                     minWidth: '200px',
+                    display: {
+                      xs: 'none',
+                      sm: 'table-cell',
+                    },
                   }}
                 >
                   Password
                 </TableCell>
                 <TableCell
                   sx={{
-                    minWidth: '100px',
+                    minWidth: {
+                      xs: '200px',
+                      sm: '100px',
+                    },
                   }}
                 >
                   &nbsp;
@@ -210,6 +217,12 @@ export default function MainTable() {
                   </TableCell>
                   <TableCell
                     size="small"
+                    sx={{
+                      display: {
+                        xs: 'none',
+                        sm: 'table-cell',
+                      },
+                    }}
                   >
                     {isVisible(secret.id) ? secret.password : '••••••••••••'}
                   </TableCell>

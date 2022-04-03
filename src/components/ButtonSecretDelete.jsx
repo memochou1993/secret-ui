@@ -14,6 +14,10 @@ export default function ButtonSecretDelete(props) {
       onClick={deleteSecret}
       sx={{
         mr: 1,
+        display: {
+          xs: 'none',
+          sm: 'inline-flex',
+        },
       }}
     >
       <DeleteOutline />
