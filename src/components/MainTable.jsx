@@ -126,7 +126,9 @@ export default function MainTable() {
         >
           <Grid
             item
-            xs={8}
+            xs={4}
+            sm={6}
+            md={8}
           >
             <ButtonSecretCreate
               onCreate={createSecret}
@@ -137,7 +139,9 @@ export default function MainTable() {
           </Grid>
           <Grid
             item
-            xs={4}
+            xs={8}
+            sm={6}
+            md={4}
           >
             <TextField
               autoComplete="off"

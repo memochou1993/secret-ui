@@ -5,6 +5,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import LockReset from '@mui/icons-material/LockReset';
+import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 
 export default function ButtonPasswordChange(props) {
@@ -16,19 +18,18 @@ export default function ButtonPasswordChange(props) {
   };
   return (
     <>
-      <Button
+      <IconButton
         color="primary"
-        disableRipple
-        variant="outlined"
+        component="span"
         onClick={() => setOpen(true)}
         sx={{
-          height: '40px',
-          mr: '4px',
+          mr: 1,
         }}
       >
-        Update Password
-      </Button>
+        <LockReset />
+      </IconButton>
       <Dialog
+        fullWidth
         open={open}
         onClose={() => setOpen(false)}
       >
@@ -37,7 +38,7 @@ export default function ButtonPasswordChange(props) {
           onSubmit={changePassword}
         >
           <DialogTitle>
-            Update Password
+            Reset Password
           </DialogTitle>
           <DialogContent>
             <TextField
@@ -48,7 +49,7 @@ export default function ButtonPasswordChange(props) {
               inputProps={{
                 minLength: 8,
               }}
-              label="Password"
+              label="New Password"
               margin="dense"
               name="password"
               required
@@ -56,16 +57,24 @@ export default function ButtonPasswordChange(props) {
               variant="outlined"
             />
           </DialogContent>
-          <DialogActions>
+          <DialogActions
+            sx={{
+              pt: 0,
+              px: 3,
+              pb: 2,
+            }}
+          >
             <Button
               onClick={() => setOpen(false)}
+              variant="outlined"
             >
               Cancel
             </Button>
             <Button
               type="submit"
+              variant="contained"
             >
-              Update
+              Reset
             </Button>
           </DialogActions>
         </Box>

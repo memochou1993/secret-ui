@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import AddBox from '@mui/icons-material/AddBox';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 
 export default function ButtonSecretCreate(props) {
@@ -16,19 +18,18 @@ export default function ButtonSecretCreate(props) {
   };
   return (
     <>
-      <Button
+      <IconButton
         color="primary"
-        disableRipple
-        variant="outlined"
+        component="span"
         onClick={() => setOpen(true)}
         sx={{
-          height: '40px',
-          mr: '4px',
+          mr: 1,
         }}
       >
-        Create Secret
-      </Button>
+        <AddBox />
+      </IconButton>
       <Dialog
+        fullWidth
         open={open}
         onClose={() => setOpen(false)}
       >
@@ -37,7 +38,7 @@ export default function ButtonSecretCreate(props) {
           onSubmit={createSecret}
         >
           <DialogTitle>
-            New Secret
+            Create Secret
           </DialogTitle>
           <DialogContent>
             <TextField
@@ -75,14 +76,22 @@ export default function ButtonSecretCreate(props) {
               variant="outlined"
             />
           </DialogContent>
-          <DialogActions>
+          <DialogActions
+            sx={{
+              pt: 0,
+              px: 3,
+              pb: 2,
+            }}
+          >
             <Button
               onClick={() => setOpen(false)}
+              variant="outlined"
             >
               Cancel
             </Button>
             <Button
               type="submit"
+              variant="contained"
             >
               Create
             </Button>

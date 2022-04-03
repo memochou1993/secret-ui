@@ -15,6 +15,17 @@ const theme = createTheme({
       main: grey[900],
     },
   },
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '&.Mui-focused fieldset': {
+            borderWidth: '1px !important',
+          },
+        },
+      },
+    },
+  },
 });
 
 export default function App() {

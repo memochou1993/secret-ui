@@ -10,7 +10,7 @@ export default function ButtonSecretCopy(props) {
       component="span"
       onClick={() => window.navigator.clipboard.writeText(text)}
       sx={{
-        mx: 1,
+        mr: 1,
       }}
     >
       <ContentCopy />

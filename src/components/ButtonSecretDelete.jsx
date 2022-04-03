@@ -13,7 +13,7 @@ export default function ButtonSecretDelete(props) {
       component="span"
       onClick={deleteSecret}
       sx={{
-        mx: 1,
+        mr: 1,
       }}
     >
       <DeleteOutline />

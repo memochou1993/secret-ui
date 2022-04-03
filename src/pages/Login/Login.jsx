@@ -60,13 +60,13 @@ export default function Login() {
           alignItems: 'center',
           display: 'flex',
           flexDirection: 'column',
-          mt: 16,
+          mt: 14,
         }}
       >
         <Avatar
           sx={{
             backgroundColor: 'primary.main',
-            m: 1,
+            m: 2,
           }}
         >
           <LockOutlined />
@@ -130,7 +130,6 @@ export default function Login() {
       )}
       <Copyright
         sx={{
-          mb: 4,
           mt: 4,
         }}
       />

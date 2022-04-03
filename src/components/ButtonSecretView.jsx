@@ -18,7 +18,7 @@ export default function ButtonSecretView(props) {
       component="span"
       onClick={toggleVisibility}
       sx={{
-        mx: 1,
+        mr: 1,
       }}
     >
       {isVisible ? <Visibility /> : <VisibilityOff />}
