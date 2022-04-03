@@ -41,7 +41,7 @@ export default function MainTable() {
   useEffect(async () => {
     try {
       const { data } = await fetchSecrets({ token });
-      await delay(250);
+      await delay(0);
       setSecrets(data.map((secret) => new Secret(secret, key)));
       setIsLoading(false);
     } catch {
