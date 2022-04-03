@@ -10,7 +10,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
-import ButtonPasswordUpdate from './ButtonPasswordUpdate';
+import ButtonPasswordChange from './ButtonPasswordChange';
 import ButtonSecretCreate from './ButtonSecretCreate';
 import ButtonSecretDelete from './ButtonSecretDelete';
 import ButtonSecretCopy from './ButtonSecretCopy';
@@ -88,7 +88,7 @@ export default function MainTable() {
       navigate('/logout');
     }
   };
-  const updatePassword = async (e) => {
+  const changePassword = async (e) => {
     e.preventDefault();
     const { password } = Object.fromEntries(new FormData(e.currentTarget));
     try {
@@ -97,8 +97,8 @@ export default function MainTable() {
         email,
         password,
       });
-      secrets.forEach((secret) => {
-        updateSecret({
+      await Promise.all(secrets.map((secret) => {
+        return updateSecret({
           token,
           id: secret.id,
           name: secret.name,
@@ -107,7 +107,7 @@ export default function MainTable() {
             password: secret.password,
           }), hash(password)),
         });
-      });
+      }));
       navigate('/logout');
     } catch {
       navigate('/logout');
@@ -131,8 +131,8 @@ export default function MainTable() {
             <ButtonSecretCreate
               onCreate={createSecret}
             />
-            <ButtonPasswordUpdate
-              onUpdate={updatePassword}
+            <ButtonPasswordChange
+              onChange={changePassword}
             />
           </Grid>
           <Grid

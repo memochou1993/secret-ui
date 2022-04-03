@@ -7,11 +7,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 
-export default function ButtonPasswordUpdate(props) {
-  const { onUpdate } = props;
+export default function ButtonPasswordChange(props) {
+  const { onChange } = props;
   const [open, setOpen] = useState(false);
-  const updatePassword = (e) => {
-    onUpdate(e);
+  const changePassword = (e) => {
+    onChange(e);
     setOpen(false);
   };
   return (
@@ -34,7 +34,7 @@ export default function ButtonPasswordUpdate(props) {
       >
         <Box
           component="form"
-          onSubmit={updatePassword}
+          onSubmit={changePassword}
         >
           <DialogTitle>
             Update Password
