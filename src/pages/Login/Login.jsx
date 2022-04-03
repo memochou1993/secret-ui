@@ -107,7 +107,7 @@ export default function Login() {
           <Button
             fullWidth
             sx={{
-              mb: 2,
+              mb: 1,
               mt: 2,
             }}
             type="submit"
