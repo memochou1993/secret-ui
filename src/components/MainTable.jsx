@@ -20,11 +20,11 @@ import {
   destroySecret,
 } from '../actions';
 import {
-  decrypt,
   delay,
   encrypt,
 } from '../helpers';
 import useAuth from '../hooks/useAuth';
+import Secret from '../models/Secret';
 
 export default function MainTable() {
   const { key, token } = useAuth();
@@ -37,17 +37,7 @@ export default function MainTable() {
     try {
       const { data } = await fetchSecrets({ token });
       await delay(250);
-      const secrets = data.map((secret) => {
-        const { id, name, ciphertext } = secret;
-        const { account, password } = JSON.parse(decrypt(ciphertext, key));
-        return {
-          id,
-          name,
-          account,
-          password,
-        };
-      });
-      setSecrets(secrets);
+      setSecrets(data.map((secret) => new Secret(secret, key)));
       setIsLoading(false);
     } catch {
       navigate('/logout');
@@ -80,13 +70,7 @@ export default function MainTable() {
           password: formData.get('password'),
         }), key),
       });
-      const { id, name, ciphertext } = data;
-      const secret = {
-        id,
-        name,
-        ...JSON.parse(decrypt(ciphertext, key)),
-      };
-      setSecrets([secret, ...secrets]);
+      setSecrets([new Secret(data, key), ...secrets]);
     } catch {
       navigate('/logout');
     }
