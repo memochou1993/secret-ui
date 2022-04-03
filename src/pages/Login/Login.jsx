@@ -120,6 +120,10 @@ export default function Login() {
       { error && (
         <Alert
           severity="error"
+          sx={{
+            mb: 1,
+            mt: 2,
+          }}
         >
           Incorrect username or password.
         </Alert>
