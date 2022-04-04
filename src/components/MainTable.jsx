@@ -23,7 +23,6 @@ import {
   destroySecret,
 } from '../actions';
 import {
-  delay,
   encrypt,
   hash,
 } from '../helpers';
@@ -41,7 +40,7 @@ export default function MainTable() {
   useEffect(async () => {
     try {
       const { data } = await fetchSecrets({ token });
-      await delay(0);
+      data.sort((a, b) => a.name.localeCompare(b.name));
       setSecrets(data.map((secret) => new Secret(secret, key)));
       setIsLoading(false);
     } catch {
@@ -49,10 +48,16 @@ export default function MainTable() {
     }
   }, []);
   const filter = useMemo(() => (secret) => {
-    const word = keyword.trim().toUpperCase();
+    const word = keyword.trim().toLowerCase();
     if (!word) return true;
-    if (secret.name.toUpperCase().includes(word)) return true;
-    if (secret.account.toUpperCase().includes(word)) return true;
+    const find = (field, text) => secret[field].toLowerCase().includes(text);
+    if (word.includes(':')) {
+      const [field, text] = word.split(':');
+      if (field === 'name') return find('name', text);
+      if (field === 'account') return find('account', text);
+    }
+    if (find('name', word)) return true;
+    if (find('account', word)) return true;
     return false;
   }, [keyword]);
   const isVisible = (id) => visibleSecrets.some((v) => v === id);
@@ -161,7 +166,7 @@ export default function MainTable() {
               <TableRow>
                 <TableCell
                   sx={{
-                    minWidth: '100px',
+                    minWidth: '200px',
                   }}
                 >
                   Name

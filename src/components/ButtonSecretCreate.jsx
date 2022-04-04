@@ -72,7 +72,7 @@ export default function ButtonSecretCreate(props) {
               margin="dense"
               name="password"
               required
-              type="password"
+              type="text"
               variant="outlined"
             />
           </DialogContent>

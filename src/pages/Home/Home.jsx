@@ -26,7 +26,9 @@ function Home() {
       <AppBar
         color="primary"
       >
-        <Toolbar>
+        <Toolbar
+          variant="dense"
+        >
           <Typography
             color="inherit"
             component="h1"
@@ -80,12 +82,12 @@ function Home() {
         }}
       >
         <Container
-          maxWidth="md"
+          maxWidth="lg"
         >
           <Box
             sx={{
-              pt: 15,
-              pb: 10,
+              pt: 12,
+              pb: 8,
             }}
           >
             <MainTable />
