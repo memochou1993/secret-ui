@@ -166,6 +166,13 @@ export default function MainTable() {
               <TableRow>
                 <TableCell
                   sx={{
+                    minWidth: '10px',
+                  }}
+                >
+                  #
+                </TableCell>
+                <TableCell
+                  sx={{
                     minWidth: '200px',
                   }}
                 >
@@ -202,10 +209,17 @@ export default function MainTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {secrets.filter(filter).map((secret) => (
+              {secrets.filter(filter).map((secret, i) => (
                 <TableRow
                   key={secret.id}
                 >
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    size="small"
+                  >
+                    {(i + 1).toLocaleString()}
+                  </TableCell>
                   <TableCell
                     component="th"
                     scope="row"
