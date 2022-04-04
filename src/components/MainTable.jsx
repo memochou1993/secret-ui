@@ -119,7 +119,7 @@ export default function MainTable() {
         }), key),
       };
       await updateSecret(data, token);
-      setVisibleSecrets(secrets.splice(secrets.findIndex((secret) => secret.id === secretId), 1, new Secret(data, key)));
+      setSecrets(secrets.map((secret) => (secret.id === secretId ? new Secret(data, key) : secret)));
     } catch (e) {
       if (e?.response?.status === 401) navigate('/logout');
       console.error(e);
