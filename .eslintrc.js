@@ -9,6 +9,7 @@ module.exports = {
   rules: {
     'arrow-body-style': 'off',
     'max-len': 'off',
+    'no-console': 'off',
     'no-param-reassign': 'off',
     'no-shadow': 'off',
     'no-undef': 'off',

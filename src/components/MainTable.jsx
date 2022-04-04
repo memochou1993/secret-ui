@@ -11,9 +11,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import ButtonPasswordChange from './ButtonPasswordChange';
+import ButtonSecretCopy from './ButtonSecretCopy';
 import ButtonSecretCreate from './ButtonSecretCreate';
 import ButtonSecretDelete from './ButtonSecretDelete';
-import ButtonSecretCopy from './ButtonSecretCopy';
+import ButtonSecretEdit from './ButtonSecretEdit';
 import ButtonSecretView from './ButtonSecretView';
 import {
   updateUser,
@@ -43,8 +44,9 @@ export default function MainTable() {
       data.sort((a, b) => a.name.localeCompare(b.name));
       setSecrets(data.map((secret) => new Secret(secret, key)));
       setIsLoading(false);
-    } catch {
-      navigate('/logout');
+    } catch (e) {
+      if (e?.response?.status === 401) navigate('/logout');
+      console.error(e);
     }
   }, []);
   const filter = useMemo(() => (secret) => {
@@ -81,16 +83,43 @@ export default function MainTable() {
         }), key),
       });
       setSecrets([new Secret(data, key), ...secrets]);
-    } catch {
-      navigate('/logout');
+    } catch (e) {
+      if (e?.response?.status === 401) navigate('/logout');
+      console.error(e);
+    }
+  };
+  const editSecret = async ({
+    secretId,
+    name,
+    account,
+    password,
+  }) => {
+    try {
+      const data = {
+        id: secretId,
+        name,
+        ciphertext: encrypt(JSON.stringify({
+          account,
+          password,
+        }), key),
+      };
+      await updateSecret({
+        token,
+        ...data,
+      });
+      setVisibleSecrets(secrets.splice(secrets.findIndex((secret) => secret.id === secretId), 1, new Secret(data, key)));
+    } catch (e) {
+      if (e?.response?.status === 401) navigate('/logout');
+      console.error(e);
     }
   };
   const deleteSecret = async (id) => {
     try {
       await destroySecret({ token, id });
       setSecrets(secrets.filter((secret) => secret.id !== id));
-    } catch {
-      navigate('/logout');
+    } catch (e) {
+      if (e?.response?.status === 401) navigate('/logout');
+      console.error(e);
     }
   };
   const changePassword = async (e) => {
@@ -114,8 +143,9 @@ export default function MainTable() {
         });
       }));
       navigate('/logout');
-    } catch {
-      navigate('/logout');
+    } catch (e) {
+      if (e?.response?.status === 401) navigate('/logout');
+      console.error(e);
     }
   };
   if (!isLoading) {
@@ -198,10 +228,7 @@ export default function MainTable() {
                 </TableCell>
                 <TableCell
                   sx={{
-                    minWidth: {
-                      xs: '200px',
-                      sm: '100px',
-                    },
+                    minWidth: '200px',
                   }}
                 >
                   &nbsp;
@@ -255,6 +282,13 @@ export default function MainTable() {
                     />
                     <ButtonSecretCopy
                       text={secret.password}
+                    />
+                    <ButtonSecretEdit
+                      onEdit={editSecret}
+                      secretId={secret.id}
+                      defaultName={secret.name}
+                      defaultAccount={secret.account}
+                      defaultPassword={secret.password}
                     />
                     <ButtonSecretDelete
                       onDelete={deleteSecret}
