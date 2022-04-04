@@ -61,6 +61,9 @@ export default function ButtonSecretEdit(props) {
               autoFocus
               fullWidth
               id="name"
+              inputProps={{
+                autoCapitalize: 'none',
+              }}
               label="Name"
               margin="dense"
               name="name"
@@ -74,6 +77,9 @@ export default function ButtonSecretEdit(props) {
               autoComplete="off"
               fullWidth
               id="account"
+              inputProps={{
+                autoCapitalize: 'none',
+              }}
               label="Account"
               margin="dense"
               name="account"
@@ -87,6 +93,9 @@ export default function ButtonSecretEdit(props) {
               autoComplete="off"
               fullWidth
               id="password"
+              inputProps={{
+                autoCapitalize: 'none',
+              }}
               label="Password"
               margin="dense"
               name="password"

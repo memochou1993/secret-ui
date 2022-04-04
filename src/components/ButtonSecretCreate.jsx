@@ -13,6 +13,7 @@ export default function ButtonSecretCreate(props) {
   const { onCreate } = props;
   const [open, setOpen] = useState(false);
   const createSecret = (e) => {
+    e.preventDefault();
     onCreate(e);
     setOpen(false);
   };
@@ -46,6 +47,9 @@ export default function ButtonSecretCreate(props) {
               autoFocus
               fullWidth
               id="name"
+              inputProps={{
+                autoCapitalize: 'none',
+              }}
               label="Name"
               margin="dense"
               name="name"
@@ -57,6 +61,9 @@ export default function ButtonSecretCreate(props) {
               autoComplete="off"
               fullWidth
               id="account"
+              inputProps={{
+                autoCapitalize: 'none',
+              }}
               label="Account"
               margin="dense"
               name="account"
@@ -68,6 +75,9 @@ export default function ButtonSecretCreate(props) {
               autoComplete="off"
               fullWidth
               id="password"
+              inputProps={{
+                autoCapitalize: 'none',
+              }}
               label="Password"
               margin="dense"
               name="password"

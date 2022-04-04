@@ -13,6 +13,7 @@ export default function ButtonPasswordChange(props) {
   const { onChange } = props;
   const [open, setOpen] = useState(false);
   const changePassword = (e) => {
+    e.preventDefault();
     onChange(e);
     setOpen(false);
   };

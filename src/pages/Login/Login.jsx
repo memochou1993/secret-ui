@@ -89,6 +89,9 @@ export default function Login() {
             autoFocus
             fullWidth
             id="email"
+            inputProps={{
+              autoCapitalize: 'none',
+            }}
             label="Email Address"
             margin="normal"
             name="email"

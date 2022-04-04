@@ -40,7 +40,7 @@ export default function MainTable() {
   const [visibleSecrets, setVisibleSecrets] = useState([]);
   useEffect(async () => {
     try {
-      const { data } = await fetchSecrets({ token });
+      const { data } = await fetchSecrets(token);
       data.sort((a, b) => a.name.localeCompare(b.name));
       setSecrets(data.map((secret) => new Secret(secret, key)));
       setIsLoading(false);
@@ -63,25 +63,40 @@ export default function MainTable() {
     return false;
   }, [keyword]);
   const isVisible = (id) => visibleSecrets.some((v) => v === id);
-  const toggleVisibility = (id) => {
-    if (isVisible(id)) {
-      setVisibleSecrets(visibleSecrets.filter((i) => i !== id));
-      return;
+  const changePassword = async (e) => {
+    const { password } = Object.fromEntries(new FormData(e.currentTarget));
+    try {
+      await updateUser({
+        email,
+        password,
+      }, token);
+      await Promise.all(secrets.map((secret) => {
+        return updateSecret({
+          token,
+          id: secret.id,
+          name: secret.name,
+          ciphertext: encrypt(JSON.stringify({
+            account: secret.account,
+            password: secret.password,
+          }), hash(password)),
+        });
+      }));
+      navigate('/logout');
+    } catch (e) {
+      if (e?.response?.status === 401) navigate('/logout');
+      console.error(e);
     }
-    setVisibleSecrets([...visibleSecrets, id]);
   };
   const createSecret = async (e) => {
-    e.preventDefault();
     const { name, account, password } = Object.fromEntries(new FormData(e.currentTarget));
     try {
       const { data } = await storeSecret({
-        token,
         name,
         ciphertext: encrypt(JSON.stringify({
           account,
           password,
         }), key),
-      });
+      }, token);
       setSecrets([new Secret(data, key), ...secrets]);
     } catch (e) {
       if (e?.response?.status === 401) navigate('/logout');
@@ -103,10 +118,7 @@ export default function MainTable() {
           password,
         }), key),
       };
-      await updateSecret({
-        token,
-        ...data,
-      });
+      await updateSecret(data, token);
       setVisibleSecrets(secrets.splice(secrets.findIndex((secret) => secret.id === secretId), 1, new Secret(data, key)));
     } catch (e) {
       if (e?.response?.status === 401) navigate('/logout');
@@ -115,38 +127,19 @@ export default function MainTable() {
   };
   const deleteSecret = async (id) => {
     try {
-      await destroySecret({ token, id });
+      await destroySecret(id, token);
       setSecrets(secrets.filter((secret) => secret.id !== id));
     } catch (e) {
       if (e?.response?.status === 401) navigate('/logout');
       console.error(e);
     }
   };
-  const changePassword = async (e) => {
-    e.preventDefault();
-    const { password } = Object.fromEntries(new FormData(e.currentTarget));
-    try {
-      await updateUser({
-        token,
-        email,
-        password,
-      });
-      await Promise.all(secrets.map((secret) => {
-        return updateSecret({
-          token,
-          id: secret.id,
-          name: secret.name,
-          ciphertext: encrypt(JSON.stringify({
-            account: secret.account,
-            password: secret.password,
-          }), hash(password)),
-        });
-      }));
-      navigate('/logout');
-    } catch (e) {
-      if (e?.response?.status === 401) navigate('/logout');
-      console.error(e);
+  const toggleVisibility = (id) => {
+    if (isVisible(id)) {
+      setVisibleSecrets(visibleSecrets.filter((i) => i !== id));
+      return;
     }
+    setVisibleSecrets([...visibleSecrets, id]);
   };
   if (!isLoading) {
     return (
@@ -195,6 +188,7 @@ export default function MainTable() {
             <TableHead>
               <TableRow>
                 <TableCell
+                  align="right"
                   sx={{
                     minWidth: '10px',
                   }}
@@ -227,6 +221,7 @@ export default function MainTable() {
                   Password
                 </TableCell>
                 <TableCell
+                  align="center"
                   sx={{
                     minWidth: '200px',
                   }}
@@ -241,6 +236,7 @@ export default function MainTable() {
                   key={secret.id}
                 >
                   <TableCell
+                    align="right"
                     component="th"
                     scope="row"
                     size="small"
@@ -273,6 +269,7 @@ export default function MainTable() {
                     {isVisible(secret.id) ? secret.password : '••••••••••••'}
                   </TableCell>
                   <TableCell
+                    align="center"
                     size="small"
                   >
                     <ButtonSecretView

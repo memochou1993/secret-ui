@@ -19,10 +19,9 @@ export const fetchToken = ({
 };
 
 export const updateUser = ({
-  token,
   email,
   password,
-}) => {
+}, token) => {
   return new Promise((res, rej) => {
     axios({
       url: '/api/user',
@@ -40,9 +39,7 @@ export const updateUser = ({
   });
 };
 
-export const fetchSecrets = ({
-  token,
-}) => {
+export const fetchSecrets = (token) => {
   return new Promise((res, rej) => {
     axios({
       url: '/api/secrets',
@@ -57,10 +54,9 @@ export const fetchSecrets = ({
 };
 
 export const storeSecret = ({
-  token,
   name,
   ciphertext,
-}) => {
+}, token) => {
   return new Promise((res, rej) => {
     axios({
       url: '/api/secrets',
@@ -79,11 +75,10 @@ export const storeSecret = ({
 };
 
 export const updateSecret = ({
-  token,
   id,
   name,
   ciphertext,
-}) => {
+}, token) => {
   return new Promise((res, rej) => {
     axios({
       url: `/api/secrets/${id}`,
@@ -101,7 +96,7 @@ export const updateSecret = ({
   });
 };
 
-export const destroySecret = ({ token, id }) => {
+export const destroySecret = (id, token) => {
   return new Promise((res, rej) => {
     axios({
       url: `/api/secrets/${id}`,
