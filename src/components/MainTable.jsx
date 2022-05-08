@@ -48,6 +48,7 @@ export default function MainTable() {
       if (e?.response?.status === 401) navigate('/logout');
       console.error(e);
     }
+    setTimeout(() => navigate('/logout'), 10 * 60 * 1000);
   }, []);
   const filter = useMemo(() => (secret) => {
     const word = keyword.trim().toLowerCase();
