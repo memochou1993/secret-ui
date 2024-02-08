@@ -1,5 +1,3 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
@@ -10,26 +8,25 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  destroySecret,
+  fetchSecrets,
+  storeSecret,
+  updateSecret,
+  updateUser,
+} from '../actions';
+import { encrypt, hash } from '../helpers';
+import useAuth from '../hooks/useAuth';
+import useSecrets from '../hooks/useSecrets';
+import Secret from '../models/Secret';
 import ButtonPasswordChange from './ButtonPasswordChange';
 import ButtonSecretCopy from './ButtonSecretCopy';
 import ButtonSecretCreate from './ButtonSecretCreate';
 import ButtonSecretDelete from './ButtonSecretDelete';
 import ButtonSecretEdit from './ButtonSecretEdit';
 import ButtonSecretView from './ButtonSecretView';
-import {
-  updateUser,
-  fetchSecrets,
-  storeSecret,
-  updateSecret,
-  destroySecret,
-} from '../actions';
-import {
-  encrypt,
-  hash,
-} from '../helpers';
-import useAuth from '../hooks/useAuth';
-import useSecrets from '../hooks/useSecrets';
-import Secret from '../models/Secret';
 
 export default function MainTable() {
   const { key, token, email } = useAuth();
@@ -38,6 +35,7 @@ export default function MainTable() {
   const [secrets, setSecrets] = useSecrets([]);
   const [keyword, setKeyword] = useState('');
   const [visibleSecrets, setVisibleSecrets] = useState([]);
+
   useEffect(async () => {
     try {
       const { data } = await fetchSecrets(token);
@@ -50,6 +48,7 @@ export default function MainTable() {
     }
     setTimeout(() => navigate('/logout'), 10 * 60 * 1000);
   }, []);
+
   const filter = useMemo(() => (secret) => {
     const word = keyword.trim().toLowerCase();
     if (!word) return true;
@@ -63,7 +62,9 @@ export default function MainTable() {
     if (find('account', word)) return true;
     return false;
   }, [keyword]);
+
   const isVisible = (id) => visibleSecrets.some((v) => v === id);
+
   const changePassword = async (e) => {
     const { password } = Object.fromEntries(new FormData(e.currentTarget));
     try {
@@ -72,15 +73,16 @@ export default function MainTable() {
         password,
       }, token);
       await Promise.all(secrets.map((secret) => {
-        return updateSecret({
-          token,
+        const newKey = hash(password);
+        const data = {
           id: secret.id,
           name: secret.name,
           ciphertext: encrypt(JSON.stringify({
             account: secret.account,
             password: secret.password,
-          }), hash(password)),
-        });
+          }), newKey),
+        };
+        return updateSecret(data, token);
       }));
       navigate('/logout');
     } catch (e) {
@@ -88,6 +90,7 @@ export default function MainTable() {
       console.error(e);
     }
   };
+
   const createSecret = async (e) => {
     const { name, account, password } = Object.fromEntries(new FormData(e.currentTarget));
     try {
@@ -104,6 +107,7 @@ export default function MainTable() {
       console.error(e);
     }
   };
+
   const editSecret = async ({
     secretId,
     name,
@@ -126,6 +130,7 @@ export default function MainTable() {
       console.error(e);
     }
   };
+
   const deleteSecret = async (id) => {
     try {
       await destroySecret(id, token);
@@ -135,6 +140,7 @@ export default function MainTable() {
       console.error(e);
     }
   };
+
   const toggleVisibility = (id) => {
     if (isVisible(id)) {
       setVisibleSecrets(visibleSecrets.filter((i) => i !== id));
@@ -142,6 +148,7 @@ export default function MainTable() {
     }
     setVisibleSecrets([...visibleSecrets, id]);
   };
+
   if (!isLoading) {
     return (
       <>

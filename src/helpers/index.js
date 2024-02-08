@@ -1,8 +1,8 @@
 import CryptoJS from 'crypto-js';
 
-export const delay = (delay) => {
+export const delay = (ms) => {
   return new Promise((res) => {
-    setTimeout(() => res(), delay);
+    setTimeout(() => res(), ms);
   });
 };
 

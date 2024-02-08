@@ -6,10 +6,14 @@ export default class Secret {
     name,
     ciphertext,
   }, key) {
-    const { account, password } = JSON.parse(decrypt(ciphertext, key));
     this.id = id;
     this.name = name;
-    this.account = account;
-    this.password = password;
+    try {
+      const { account, password } = JSON.parse(decrypt(ciphertext, key));
+      this.account = account;
+      this.password = password;
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
