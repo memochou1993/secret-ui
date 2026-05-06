@@ -8,7 +8,7 @@ import {
   startAuthentication,
   startRegistration,
 } from '@simplewebauthn/browser';
-import { hash } from '../helpers';
+import { buildKeys } from '../helpers';
 import {
   fetchToken,
   fetchWebAuthnLoginOptions,
@@ -29,26 +29,29 @@ export function AuthProvider({ children }) {
   const [email, setEmail] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    setKey(sessionStorage.getItem('key'));
-    setToken(sessionStorage.getItem('token'));
-    setEmail(sessionStorage.getItem('email'));
+    const t = sessionStorage.getItem('token');
+    const e = sessionStorage.getItem('email');
+    const password = sessionStorage.getItem('password');
+    setToken(t);
+    setEmail(e);
+    if (password && e) {
+      buildKeys(password, e)
+        .then(setKey)
+        .catch((err) => console.error(err))
+        .finally(() => setLoading(false));
+      return;
+    }
     setLoading(false);
   }, []);
-  const login = ({ email, password }) => {
-    return new Promise((res, rej) => {
-      fetchToken({ email, password })
-        .then(({ token }) => {
-          const key = hash(password);
-          setKey(key);
-          setToken(token);
-          setEmail(email);
-          sessionStorage.setItem('key', key);
-          sessionStorage.setItem('token', token);
-          sessionStorage.setItem('email', email);
-          res();
-        })
-        .catch((e) => rej(e));
-    });
+  const login = async ({ email, password }) => {
+    const { token } = await fetchToken({ email, password });
+    const keys = await buildKeys(password, email);
+    setKey(keys);
+    setToken(token);
+    setEmail(email);
+    sessionStorage.setItem('password', password);
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('email', email);
   };
   const registerPasskey = async () => {
     try {
@@ -87,10 +90,10 @@ export function AuthProvider({ children }) {
     loginWithPasskey,
     registerPasskey,
     logout,
-    setKey: (password) => {
-      const key = hash(password);
-      setKey(key);
-      sessionStorage.setItem('key', key);
+    setKey: async (password) => {
+      const keys = await buildKeys(password, email);
+      setKey(keys);
+      sessionStorage.setItem('password', password);
     },
   };
   return (

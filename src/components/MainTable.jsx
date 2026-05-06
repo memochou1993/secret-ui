@@ -17,10 +17,12 @@ import {
   updateSecret,
   updateUser,
 } from '../actions';
-import { encrypt, hash } from '../helpers';
+import { deriveKey, encrypt, isLegacy } from '../helpers';
 import useAuth from '../hooks/useAuth';
 import useSecrets from '../hooks/useSecrets';
 import Secret from '../models/Secret';
+import ButtonExportSecrets from './ButtonExportSecrets';
+import ButtonMigrateEncryption from './ButtonMigrateEncryption';
 import ButtonPasswordChange from './ButtonPasswordChange';
 import ButtonSecretCopy from './ButtonSecretCopy';
 import ButtonSecretCreate from './ButtonSecretCreate';
@@ -36,18 +38,29 @@ export default function MainTable() {
   const [keyword, setKeyword] = useState('');
   const [visibleSecrets, setVisibleSecrets] = useState([]);
 
-  useEffect(async () => {
-    try {
-      const { data } = await fetchSecrets(token);
-      data.sort((a, b) => a.name.localeCompare(b.name));
-      setSecrets(data.map((secret) => new Secret(secret, key)));
-      setIsLoading(false);
-    } catch (e) {
-      if (e?.response?.status === 401) navigate('/logout');
-      console.error(e);
-    }
-    setTimeout(() => navigate('/logout'), 10 * 60 * 1000);
-  }, []);
+  useEffect(() => {
+    if (!key) return undefined;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await fetchSecrets(token);
+        if (cancelled) return;
+        data.sort((a, b) => a.name.localeCompare(b.name));
+        const decoded = await Promise.all(data.map((s) => Secret.from(s, key)));
+        if (cancelled) return;
+        setSecrets(decoded);
+        setIsLoading(false);
+      } catch (e) {
+        if (e?.response?.status === 401) navigate('/logout');
+        console.error(e);
+      }
+    })();
+    const timer = setTimeout(() => navigate('/logout'), 10 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [key]);
 
   const filter = useMemo(() => (secret) => {
     const word = keyword.trim().toLowerCase();
@@ -72,15 +85,15 @@ export default function MainTable() {
         email,
         password,
       }, token);
-      await Promise.all(secrets.map((secret) => {
-        const newKey = hash(password);
+      const newKeys = { current: await deriveKey(password, email) };
+      await Promise.all(secrets.map(async (secret) => {
         const data = {
           id: secret.id,
           name: secret.name,
-          ciphertext: encrypt(JSON.stringify({
+          ciphertext: await encrypt(JSON.stringify({
             account: secret.account,
             password: secret.password,
-          }), newKey),
+          }), newKeys),
         };
         return updateSecret(data, token);
       }));
@@ -94,14 +107,16 @@ export default function MainTable() {
   const createSecret = async (e) => {
     const { name, account, password } = Object.fromEntries(new FormData(e.currentTarget));
     try {
+      const ciphertext = await encrypt(JSON.stringify({
+        account,
+        password,
+      }), key);
       const { data } = await storeSecret({
         name,
-        ciphertext: encrypt(JSON.stringify({
-          account,
-          password,
-        }), key),
+        ciphertext,
       }, token);
-      setSecrets([new Secret(data, key), ...secrets]);
+      const newSecret = await Secret.from(data, key);
+      setSecrets([newSecret, ...secrets]);
     } catch (e) {
       if (e?.response?.status === 401) navigate('/logout');
       console.error(e);
@@ -115,16 +130,18 @@ export default function MainTable() {
     password,
   }) => {
     try {
+      const ciphertext = await encrypt(JSON.stringify({
+        account,
+        password,
+      }), key);
       const data = {
         id: secretId,
         name,
-        ciphertext: encrypt(JSON.stringify({
-          account,
-          password,
-        }), key),
+        ciphertext,
       };
       await updateSecret(data, token);
-      setSecrets(secrets.map((secret) => (secret.id === secretId ? new Secret(data, key) : secret)));
+      const updated = await Secret.from(data, key);
+      setSecrets(secrets.map((secret) => (secret.id === secretId ? updated : secret)));
     } catch (e) {
       if (e?.response?.status === 401) navigate('/logout');
       console.error(e);
@@ -141,6 +158,10 @@ export default function MainTable() {
     }
   };
 
+  const replaceSecret = (updated) => {
+    setSecrets(secrets.map((s) => (s.id === updated.id ? updated : s)));
+  };
+
   const toggleVisibility = (id) => {
     if (isVisible(id)) {
       setVisibleSecrets(visibleSecrets.filter((i) => i !== id));
@@ -150,6 +171,7 @@ export default function MainTable() {
   };
 
   if (!isLoading) {
+    const hasLegacy = secrets.some((s) => isLegacy(s.ciphertext));
     return (
       <>
         <Grid
@@ -172,6 +194,17 @@ export default function MainTable() {
             <ButtonPasswordChange
               onChange={changePassword}
             />
+            <ButtonExportSecrets
+              secrets={secrets}
+            />
+            {hasLegacy && (
+              <ButtonMigrateEncryption
+                keys={key}
+                secrets={secrets}
+                token={token}
+                onMigrated={replaceSecret}
+              />
+            )}
           </Grid>
           <Grid
             item
