@@ -23,7 +23,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# decrypted backups exported via the UI
-secrets-backup-*.json
-secrets.json

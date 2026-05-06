@@ -17,12 +17,11 @@ import {
   updateSecret,
   updateUser,
 } from '../actions';
-import { deriveKey, encrypt, isLegacy } from '../helpers';
+import { deriveKey, encrypt } from '../helpers';
 import useAuth from '../hooks/useAuth';
 import useSecrets from '../hooks/useSecrets';
 import Secret from '../models/Secret';
 import ButtonExportSecrets from './ButtonExportSecrets';
-import ButtonMigrateEncryption from './ButtonMigrateEncryption';
 import ButtonPasswordChange from './ButtonPasswordChange';
 import ButtonSecretCopy from './ButtonSecretCopy';
 import ButtonSecretCreate from './ButtonSecretCreate';
@@ -85,7 +84,7 @@ export default function MainTable() {
         email,
         password,
       }, token);
-      const newKeys = { current: await deriveKey(password, email) };
+      const newKey = await deriveKey(password, email);
       await Promise.all(secrets.map(async (secret) => {
         const data = {
           id: secret.id,
@@ -93,7 +92,7 @@ export default function MainTable() {
           ciphertext: await encrypt(JSON.stringify({
             account: secret.account,
             password: secret.password,
-          }), newKeys),
+          }), newKey),
         };
         return updateSecret(data, token);
       }));
@@ -158,10 +157,6 @@ export default function MainTable() {
     }
   };
 
-  const replaceSecret = (updated) => {
-    setSecrets(secrets.map((s) => (s.id === updated.id ? updated : s)));
-  };
-
   const toggleVisibility = (id) => {
     if (isVisible(id)) {
       setVisibleSecrets(visibleSecrets.filter((i) => i !== id));
@@ -171,7 +166,6 @@ export default function MainTable() {
   };
 
   if (!isLoading) {
-    const hasLegacy = secrets.some((s) => isLegacy(s.ciphertext));
     return (
       <>
         <Grid
@@ -197,14 +191,6 @@ export default function MainTable() {
             <ButtonExportSecrets
               secrets={secrets}
             />
-            {hasLegacy && (
-              <ButtonMigrateEncryption
-                keys={key}
-                secrets={secrets}
-                token={token}
-                onMigrated={replaceSecret}
-              />
-            )}
           </Grid>
           <Grid
             item

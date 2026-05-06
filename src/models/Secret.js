@@ -6,16 +6,14 @@ export default class Secret {
     this.name = '';
     this.account = '';
     this.password = '';
-    this.ciphertext = '';
   }
 
-  static async from(data, keys) {
+  static async from(data, key) {
     const secret = new Secret();
     secret.id = data.id;
     secret.name = data.name;
-    secret.ciphertext = data.ciphertext;
     try {
-      const { account, password } = JSON.parse(await decrypt(data.ciphertext, keys));
+      const { account, password } = JSON.parse(await decrypt(data.ciphertext, key));
       secret.account = account;
       secret.password = password;
     } catch (e) {

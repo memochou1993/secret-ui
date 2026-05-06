@@ -1,5 +1,3 @@
-import CryptoJS from 'crypto-js';
-
 const { subtle } = window.crypto;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -32,11 +30,6 @@ const fromBase64 = (str) => {
   return u8;
 };
 
-// SHA256 hex of password. Kept only for decrypting legacy ciphertexts.
-export const legacyHash = (text) => {
-  return CryptoJS.SHA256(text).toString();
-};
-
 // Derive a non-extractable AES-GCM CryptoKey from password + email-as-salt.
 export const deriveKey = async (password, email) => {
   const baseKey = await subtle.importKey(
@@ -60,22 +53,11 @@ export const deriveKey = async (password, email) => {
   );
 };
 
-// `current` is for AES-GCM v2 reads/writes; `legacy` is the SHA256 hex used by
-// CryptoJS for decrypting pre-v2 ciphertexts.
-export const buildKeys = async (password, email) => ({
-  legacy: legacyHash(password),
-  current: await deriveKey(password, email),
-});
-
-export const isLegacy = (ciphertext) => {
-  return typeof ciphertext === 'string' && !ciphertext.startsWith(VERSION_PREFIX);
-};
-
-export const encrypt = async (plaintext, keys) => {
+export const encrypt = async (plaintext, key) => {
   const iv = window.crypto.getRandomValues(new Uint8Array(IV_BYTES));
   const ciphertext = await subtle.encrypt(
     { name: 'AES-GCM', iv },
-    keys.current,
+    key,
     encoder.encode(plaintext),
   );
   const out = new Uint8Array(IV_BYTES + ciphertext.byteLength);
@@ -84,19 +66,19 @@ export const encrypt = async (plaintext, keys) => {
   return `${VERSION_PREFIX}${toBase64(out)}`;
 };
 
-export const decrypt = async (ciphertext, keys) => {
-  if (typeof ciphertext === 'string' && ciphertext.startsWith(VERSION_PREFIX)) {
-    const bytes = fromBase64(ciphertext.slice(VERSION_PREFIX.length));
-    const iv = bytes.slice(0, IV_BYTES);
-    const data = bytes.slice(IV_BYTES);
-    const plaintext = await subtle.decrypt(
-      { name: 'AES-GCM', iv },
-      keys.current,
-      data,
-    );
-    return decoder.decode(plaintext);
+export const decrypt = async (ciphertext, key) => {
+  if (typeof ciphertext !== 'string' || !ciphertext.startsWith(VERSION_PREFIX)) {
+    throw new Error('unsupported ciphertext format');
   }
-  return CryptoJS.AES.decrypt(ciphertext, keys.legacy).toString(CryptoJS.enc.Utf8);
+  const bytes = fromBase64(ciphertext.slice(VERSION_PREFIX.length));
+  const iv = bytes.slice(0, IV_BYTES);
+  const data = bytes.slice(IV_BYTES);
+  const plaintext = await subtle.decrypt(
+    { name: 'AES-GCM', iv },
+    key,
+    data,
+  );
+  return decoder.decode(plaintext);
 };
 
 export default null;

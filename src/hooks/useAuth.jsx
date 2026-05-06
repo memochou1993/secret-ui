@@ -8,7 +8,7 @@ import {
   startAuthentication,
   startRegistration,
 } from '@simplewebauthn/browser';
-import { buildKeys } from '../helpers';
+import { deriveKey } from '../helpers';
 import {
   fetchToken,
   fetchWebAuthnLoginOptions,
@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
     setToken(t);
     setEmail(e);
     if (password && e) {
-      buildKeys(password, e)
+      deriveKey(password, e)
         .then(setKey)
         .catch((err) => console.error(err))
         .finally(() => setLoading(false));
@@ -45,8 +45,8 @@ export function AuthProvider({ children }) {
   }, []);
   const login = async ({ email, password }) => {
     const { token } = await fetchToken({ email, password });
-    const keys = await buildKeys(password, email);
-    setKey(keys);
+    const k = await deriveKey(password, email);
+    setKey(k);
     setToken(token);
     setEmail(email);
     sessionStorage.setItem('password', password);
@@ -91,8 +91,8 @@ export function AuthProvider({ children }) {
     registerPasskey,
     logout,
     setKey: async (password) => {
-      const keys = await buildKeys(password, email);
-      setKey(keys);
+      const k = await deriveKey(password, email);
+      setKey(k);
       sessionStorage.setItem('password', password);
     },
   };
