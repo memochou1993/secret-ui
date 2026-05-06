@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
   const registerPasskey = async () => {
     try {
       const options = await fetchWebAuthnRegisterOptions(token);
-      const attestation = await startRegistration(options);
+      const attestation = await startRegistration({ optionsJSON: options });
       await finishWebAuthnRegister(attestation, token);
     } catch (e) {
       throw new Error(e.response?.data?.message || e.message);
@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
   const loginWithPasskey = async () => {
     try {
       const options = await fetchWebAuthnLoginOptions();
-      const assertion = await startAuthentication(options);
+      const assertion = await startAuthentication({ optionsJSON: options });
       const { token, email } = await finishWebAuthnLogin(assertion);
       setToken(token);
       setEmail(email);
