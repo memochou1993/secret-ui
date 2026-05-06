@@ -11,16 +11,51 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import MainTable from '../../components/MainTable';
 import useAuth from '../../hooks/useAuth';
 
 function Home() {
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const {
+    key,
+    token,
+    setKey,
+    registerPasskey,
+  } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [message, setMessage] = useState('');
+  const [severity, setSeverity] = useState('success');
+  const [password, setPassword] = useState('');
+
   const handleLogout = () => {
     navigate('/logout');
   };
+
+  const handleRegisterPasskey = async () => {
+    setAnchorEl(null);
+    try {
+      await registerPasskey();
+      setMessage('Passkey registered successfully');
+      setSeverity('success');
+    } catch (e) {
+      setMessage(e.message);
+      setSeverity('error');
+    }
+  };
+
+  const handleSubmitMasterPassword = (e) => {
+    e.preventDefault();
+    setKey(password);
+  };
+
   return (
     <>
       <AppBar
@@ -65,6 +100,11 @@ function Home() {
                 }}
               >
                 <MenuItem
+                  onClick={handleRegisterPasskey}
+                >
+                  Register Passkey
+                </MenuItem>
+                <MenuItem
                   onClick={handleLogout}
                 >
                   Logout
@@ -74,6 +114,58 @@ function Home() {
           )}
         </Toolbar>
       </AppBar>
+      <Snackbar
+        autoHideDuration={6000}
+        onClose={() => setMessage('')}
+        open={Boolean(message)}
+      >
+        <Alert
+          onClose={() => setMessage('')}
+          severity={severity}
+          sx={{
+            width: '100%',
+          }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
+      <Dialog
+        open={!key}
+      >
+        <DialogTitle>
+          Master Password
+        </DialogTitle>
+        <Box
+          component="form"
+          onSubmit={handleSubmitMasterPassword}
+        >
+          <DialogContent>
+            <TextField
+              autoFocus
+              fullWidth
+              label="Master Password"
+              margin="dense"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              type="password"
+              value={password}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+            >
+              Submit
+            </Button>
+          </DialogActions>
+        </Box>
+      </Dialog>
       <Box
         component="main"
         sx={{

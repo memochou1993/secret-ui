@@ -5,6 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
 import LockOutlined from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
@@ -34,7 +35,7 @@ function Copyright(props) {
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginWithPasskey } = useAuth();
   const { state } = useLocation();
   const [error, setError] = useState('');
   const handleLogin = async (e) => {
@@ -45,6 +46,14 @@ export default function Login() {
         email,
         password,
       });
+      navigate(state?.path || '/');
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+  const handlePasskeyLogin = async () => {
+    try {
+      await loginWithPasskey();
       navigate(state?.path || '/');
     } catch (e) {
       setError(e.message);
@@ -117,6 +126,20 @@ export default function Login() {
             variant="contained"
           >
             Login
+          </Button>
+          <Divider
+            sx={{
+              my: 2,
+            }}
+          >
+            OR
+          </Divider>
+          <Button
+            fullWidth
+            onClick={handlePasskeyLogin}
+            variant="outlined"
+          >
+            Login with Passkey
           </Button>
         </Box>
       </Box>

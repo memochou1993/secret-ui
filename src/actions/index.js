@@ -110,4 +110,56 @@ export const destroySecret = (id, token) => {
   });
 };
 
+export const fetchWebAuthnRegisterOptions = (token) => {
+  return new Promise((res, rej) => {
+    axios({
+      url: '/api/webauthn/register/begin',
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(({ data }) => res(data))
+      .catch((e) => rej(e));
+  });
+};
+
+export const finishWebAuthnRegister = (body, token) => {
+  return new Promise((res, rej) => {
+    axios({
+      url: '/api/webauthn/register/finish',
+      method: 'POST',
+      data: body,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(({ data }) => res(data))
+      .catch((e) => rej(e));
+  });
+};
+
+export const fetchWebAuthnLoginOptions = () => {
+  return new Promise((res, rej) => {
+    axios({
+      url: '/api/webauthn/login/begin',
+      method: 'POST',
+    })
+      .then(({ data }) => res(data))
+      .catch((e) => rej(e));
+  });
+};
+
+export const finishWebAuthnLogin = (body) => {
+  return new Promise((res, rej) => {
+    axios({
+      url: '/api/webauthn/login/finish',
+      method: 'POST',
+      data: body,
+    })
+      .then(({ data }) => res(data))
+      .catch((e) => rej(e));
+  });
+};
+
 export default null;

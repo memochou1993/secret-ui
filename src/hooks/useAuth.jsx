@@ -4,8 +4,18 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import {
+  startAuthentication,
+  startRegistration,
+} from '@simplewebauthn/browser';
 import { hash } from '../helpers';
-import { fetchToken } from '../actions';
+import {
+  fetchToken,
+  fetchWebAuthnLoginOptions,
+  fetchWebAuthnRegisterOptions,
+  finishWebAuthnLogin,
+  finishWebAuthnRegister,
+} from '../actions';
 
 const AuthContext = createContext(null);
 
@@ -40,6 +50,28 @@ export function AuthProvider({ children }) {
         .catch((e) => rej(e));
     });
   };
+  const registerPasskey = async () => {
+    try {
+      const options = await fetchWebAuthnRegisterOptions(token);
+      const attestation = await startRegistration(options);
+      await finishWebAuthnRegister(attestation, token);
+    } catch (e) {
+      throw new Error(e.response?.data?.message || e.message);
+    }
+  };
+  const loginWithPasskey = async () => {
+    try {
+      const options = await fetchWebAuthnLoginOptions();
+      const assertion = await startAuthentication(options);
+      const { token, email } = await finishWebAuthnLogin(assertion);
+      setToken(token);
+      setEmail(email);
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('email', email);
+    } catch (e) {
+      throw new Error(e.response?.data?.message || e.message);
+    }
+  };
   const logout = () => {
     setKey(null);
     setToken(null);
@@ -52,7 +84,14 @@ export function AuthProvider({ children }) {
     email,
     loading,
     login,
+    loginWithPasskey,
+    registerPasskey,
     logout,
+    setKey: (password) => {
+      const key = hash(password);
+      setKey(key);
+      sessionStorage.setItem('key', key);
+    },
   };
   return (
     <AuthContext.Provider
