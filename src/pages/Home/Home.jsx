@@ -130,6 +130,7 @@ function Home() {
         </Alert>
       </Snackbar>
       <Dialog
+        fullWidth
         open={!key}
       >
         <DialogTitle>
@@ -151,7 +152,13 @@ function Home() {
               value={password}
             />
           </DialogContent>
-          <DialogActions>
+          <DialogActions
+            sx={{
+              pt: 0,
+              px: 3,
+              pb: 2,
+            }}
+          >
             <Button
               onClick={handleLogout}
             >
