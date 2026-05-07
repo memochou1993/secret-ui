@@ -21,7 +21,6 @@ import { deriveKey, encrypt } from '../helpers';
 import useAuth from '../hooks/useAuth';
 import useSecrets from '../hooks/useSecrets';
 import Secret from '../models/Secret';
-import ButtonExportSecrets from './ButtonExportSecrets';
 import ButtonPasswordChange from './ButtonPasswordChange';
 import ButtonSecretCopy from './ButtonSecretCopy';
 import ButtonSecretCreate from './ButtonSecretCreate';
@@ -187,9 +186,6 @@ export default function MainTable() {
             />
             <ButtonPasswordChange
               onChange={changePassword}
-            />
-            <ButtonExportSecrets
-              secrets={secrets}
             />
           </Grid>
           <Grid
